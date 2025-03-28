@@ -1,0 +1,48 @@
+- name: Install Docker and Run Nginx Container
+  hosts: dockerhosts
+  become: yes
+  tasks:
+    - name: Update apt packages
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Start Docker Service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add current user to Docker group
+      user:
+        name: "worker1"
+        groups: docker
+        append: yes
+
+    - name: Ensure pip is installed
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Install Docker SDK for Python
+      pip:
+        name: docker
+        state: present
+
+    - name: Pull Nginx Image
+      community.docker.docker_image:
+        name: nginx
+        source: pull
+
+    - name: Run Nginx Container
+      community.docker.docker_container:
+        name: nginx_container
+        image: nginx
+        state: started
+        restart_policy: always
+        ports:
+          - "8080:80"

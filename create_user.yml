@@ -1,0 +1,23 @@
+- name: Create a User and Set Sudo Access
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create a new user
+      user:
+        name: devops
+        password: "$6$randomsalt$QGyGJxUoU3tH2p8r7P8n2p1lBbR/fFrYw37n8uF8ic.3pEr9Bz7po5Vz2Bg3y1J79P5e4F78m6mH4dFC1djgm1"
+        shell: /bin/bash
+        create_home: yes
+
+    - name: Add user to sudo group
+      user:
+        name: devops
+        groups: sudo
+        append: yes
+
+    - name: Allow passwordless sudo for devops user
+      copy:
+        dest: /etc/sudoers.d/devops
+        content: "devops ALL=(ALL) NOPASSWD:ALL"
+        mode: 0440
+

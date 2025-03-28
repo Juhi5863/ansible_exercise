@@ -1,0 +1,9 @@
+- name: Install and Start Apache
+  hosts: workers  # Make sure this matches your inventory group
+  become: yes
+  tasks:
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: present
+
